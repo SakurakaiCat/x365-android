@@ -1,0 +1,17 @@
+# Android / Gradle
+.gradle/
+build/
+app/build/
+local.properties
+*.iml
+.idea/
+
+# Keenotes
+*.keystore
+*.jks
+
+# Crash dumps
+*.hprof
+
+# OS
+.DS_Store
