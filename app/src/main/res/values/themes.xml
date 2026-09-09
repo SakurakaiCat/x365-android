@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NoActionBar 变体：UI 由 Compose Scaffold + TopAppBar 全权负责，
+         避免 AppCompat decor 注入的 ActionBar 与应用栏叠加（双 AppBar 根源） -->
+    <style name="Theme.X365" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
