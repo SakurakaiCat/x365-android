@@ -125,7 +125,7 @@ fun AccountSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "365VPN 账号",
+                "账号",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -174,7 +174,7 @@ fun AccountSheet(
                     Text(if (busy) "登录中…" else "登录并获取节点")
                 }
                 Text(
-                    "凭据仅保存在本机，用于登录 365VPN API 拉取节点。",
+                    "凭据仅保存在本机，用于登录并拉取节点。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 8.dp),

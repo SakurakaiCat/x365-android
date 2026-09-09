@@ -20,7 +20,7 @@ data class NodeItem(
 /**
  * 国家/地区 → 国旗 emoji 映射。
  * 优先用 URI path 的 ISO 码（/hk → HK），标签中文名兜底；
- * 中文名映射来自 365VPN API 的 servers 元数据。
+ * 中文名映射来自服务端 servers 元数据。
  */
 object CountryFlags {
 
