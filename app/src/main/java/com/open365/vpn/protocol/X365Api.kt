@@ -18,7 +18,7 @@ import java.util.zip.Inflater
 import javax.crypto.Cipher
 
 /**
- * 365VPN API 客户端。
+ * 账号服务 API 客户端。
  *
  * x-sig = device-info JSON 按 245 字节分块，逐块用服务端 RSA-2048 公钥做
  *         PKCS1 v1.5 加密，拼接后 base64。载荷不含时间戳/nonce，同设备可复用。
