@@ -66,7 +66,7 @@ JNI 绑定的 Java 类为 `com.open365.vpn.X365VpnService`。
 `app/libs/x365.aar` 由 X365 协议的 gomobile 绑定生成：
 
 ```sh
-gomobile bind -trimpath -target android -androidapi 21 -o app/libs/x365.aar github.com/365vpn/x365/mobile
+gomobile bind -trimpath -target android -androidapi 21 -o app/libs/x365.aar github.com/SakurakaiCat/x365-mobile
 ```
 
 ### 打包
