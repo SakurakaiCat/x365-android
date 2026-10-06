@@ -19,6 +19,21 @@ Open365VPN 是一个基于 X365 协议的 Android VPN 客户端。X365 协议在
 - 出口 IP 与地理位置检测
 - Material You 动态取色主题
 
+## 界面
+
+| 节点与连接状态 | 导入 x365:// URI | 账号登录 |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/01-nodes.png" width="240"> | <img src="assets/screenshots/02-import.png" width="240"> | <img src="assets/screenshots/03-account.png" width="240"> |
+| 状态仪表盘、节点列表与连接日志 | 粘贴 `x365://` URI 批量导入 | 邮箱/密码登录并拉取节点 |
+
+| 节点详情 | 关于 | 主题配色 |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/04-node-detail.png" width="240"> | <img src="assets/screenshots/05-about.png" width="240"> | <img src="assets/screenshots/06-theme.png" width="240"> |
+| 协议参数（密钥默认打码） | 版本与开源信息 | 动态取色 / 5 套固定配色 |
+
+> 截图取自 Android 16（API 36）模拟器（Pixel 7，1080×2400）。节点与账号均为演示数据
+> （`*.example.net`、`demo@example.com`），仓库不附带任何真实节点或凭据。
+
 ## 使用
 
 ### 账号登录（推荐）
@@ -45,7 +60,7 @@ Open365VPN 是一个基于 X365 协议的 Android VPN 客户端。X365 协议在
    zlib 解压后得到节点 YAML（含 `x365://` 链接）。
 
 实现见 `app/src/main/java/com/open365/vpn/protocol/X365Api.kt`。独立的
-Go 实现见 [cmd/x365-cli](../../cmd/x365-cli/README.md)。
+Go 实现见 [x365-cli](../x365-cli/x365-cli/README.md)。
 
 ## 构建
 
@@ -58,21 +73,31 @@ Go 实现见 [cmd/x365-cli](../../cmd/x365-cli/README.md)。
 ### Native 组件
 
 `app/src/main/jniLibs/` 下的 `libhev-socks5-tunnel.so` 由本仓库
-`hev-socks5-tunnel/` 目录的源码构建：
+`hev-socks5-tunnel/` 目录的源码构建。本仓库布局没有 `jni/` 子目录，
+需要显式指定 `Android.mk`；`APP_PLATFORM=android-21` 与 `minSdk` 一致：
 
 ```sh
 cd hev-socks5-tunnel
-$ANDROID_NDK_HOME/ndk-build APP_CFLAGS="-DPKGNAME=com/open365/vpn -DCLSNAME=X365VpnService"
+$ANDROID_NDK_HOME/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk \
+  APP_PLATFORM=android-21 APP_ABI="arm64-v8a armeabi-v7a x86_64" \
+  APP_CFLAGS="-DPKGNAME=com/open365/vpn -DCLSNAME=X365VpnService"
+# 产物在 libs/<abi>/libhev-socks5-tunnel.so，复制到 app/src/main/jniLibs/<abi>/
 ```
 
-JNI 绑定的 Java 类为 `com.open365.vpn.X365VpnService`。
+`x86_64` 供 x86_64 模拟器使用。JNI 绑定的 Java 类为
+`com.open365.vpn.X365VpnService`。
 
 ### Go 组件
 
-`app/libs/x365.aar` 由 X365 协议的 gomobile 绑定生成：
+`app/libs/x365.aar` 由 X365 协议的 gomobile 绑定生成。需要在
+`x365-mobile/` 模块内执行（其 `go.mod` 通过 `replace` 指向 `../x365-core`），
+且 `PATH` 中有与 `go.mod` 一致的 `gobind`：
 
 ```sh
-gomobile bind -trimpath -target android -androidapi 21 -o app/libs/x365.aar github.com/SakurakaiCat/x365-mobile
+cd ../x365-mobile
+go install golang.org/x/mobile/cmd/gobind@v0.0.0-20260821190718-4776eadac327
+gomobile bind -trimpath -target android -androidapi 21 \
+  -o ../x365-android/app/libs/x365.aar github.com/SakurakaiCat/x365-mobile
 ```
 
 ### 打包
@@ -81,9 +106,21 @@ gomobile bind -trimpath -target android -androidapi 21 -o app/libs/x365.aar gith
 ./gradlew assembleDebug
 ```
 
+### 模拟器
+
+`jniLibs/x86_64` 已包含 x86_64 的 native 库，可直接在 x86_64 模拟器
+（`google_apis` 镜像）上运行：
+
+```sh
+avdmanager create avd -n x365_api36 -k "system-images;android-36;google_apis;x86_64" -d pixel_7
+$ANDROID_HOME/emulator/emulator -avd x365_api36 -no-window -gpu swiftshader_indirect &
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n com.open365.vpn/.MainActivity
+```
+
 ## 依赖与许可
 
-- X365 协议核心：[core/](../core/README.md)（MIT）
+- X365 协议核心：[x365-core](../x365-core/README.md)（MIT）
 - hev-socks5-tunnel（MIT）
 - AndroidX / Jetpack Compose（Apache 2.0）
 

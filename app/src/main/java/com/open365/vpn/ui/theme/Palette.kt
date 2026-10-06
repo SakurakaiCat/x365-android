@@ -3,8 +3,11 @@ package com.open365.vpn.ui.theme
 import android.os.Build
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
 /** 主题选项：动态取色（Android 12+）+ 5 套固定配色 */
 enum class AppTheme(val id: String, val label: String) {
@@ -167,6 +170,14 @@ val AppTheme.darkScheme: ColorScheme
 private fun lightSchemeOf(c: PaletteColors) = lightScheme(c)
 private fun darkSchemeOf(c: PaletteColors) = darkScheme(c)
 
-/** 主题选择器里的预览色点（primary / secondary / tertiary，浅色方案） */
-val AppTheme.previewColors: List<Color>
-    get() = lightPalettes.getValue(this).let { listOf(it.primary, it.secondary, it.tertiary) }
+/** 主题选择器里的预览色点（primary / secondary / tertiary，浅色方案）。
+ *  DYNAMIC 没有固定配色表，取系统动态取色方案；低版本回退 Frost。 */
+@Composable
+fun AppTheme.previewColors(): List<Color> {
+    if (this == AppTheme.DYNAMIC && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val scheme = dynamicLightColorScheme(LocalContext.current)
+        return listOf(scheme.primary, scheme.secondary, scheme.tertiary)
+    }
+    val c = lightPalettes.getValue(if (this == AppTheme.DYNAMIC) AppTheme.FROST else this)
+    return listOf(c.primary, c.secondary, c.tertiary)
+}

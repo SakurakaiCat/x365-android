@@ -76,7 +76,7 @@ fun ThemeSheet(
                     ListItem(
                         leadingContent = {
                             Row {
-                                theme.previewColors.forEach { c ->
+                                theme.previewColors().forEach { c ->
                                     Surface(
                                         color = c,
                                         shape = CircleShape,
